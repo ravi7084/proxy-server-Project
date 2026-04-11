@@ -1,99 +1,219 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .stat-card {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+    .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    }
+    .stat-card-icon {
+        position: absolute;
+        right: -15px;
+        bottom: -15px;
+        opacity: 0.1;
+        width: 100px;
+        height: 100px;
+        transition: transform 0.5s ease-out;
+    }
+    .stat-card:hover .stat-card-icon {
+        transform: scale(1.15) rotate(-10deg);
+        opacity: 0.15;
+    }
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .stat-card-header h3 {
+        margin: 0 !important;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .stat-card-header svg {
+        width: 22px;
+        height: 22px;
+    }
+    .text-primary, .stat-card-header.text-primary h3 { color: #3498db; }
+    .text-danger, .stat-card-header.text-danger h3 { color: #e74c3c; }
+    .text-success, .stat-card-header.text-success h3 { color: #2ecc71; }
+    .text-warning, .stat-card-header.text-warning h3 { color: #f39c12; }
+    
+    .panel-icon-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .add-user-btn {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        padding-left: 14px;
+        position: relative;
+        overflow: hidden;
+    }
+    .add-user-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    }
+    .dashboard-panel-glass {
+        background: linear-gradient(to right bottom, #ffffff, #fdfdff);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        position: relative;
+        overflow: hidden;
+    }
+    .panel-bg-icon {
+        position: absolute;
+        right: -20px;
+        top: -40px;
+        color: rgba(52, 152, 219, 0.03);
+        width: 200px;
+        height: 200px;
+        transform: rotate(-15deg);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .dashboard-panel-glass > * {
+        position: relative;
+        z-index: 1;
+    }
+</style>
 <div class="dashboard-container">
     <div class="dashboard-header">
         <div>
-            <p class="eyebrow">Control Center</p>
-            <h2>Welcome, {{ username }}</h2>
+            <p class="eyebrow" style="color: #93c5fd;">Control Center</p>
+            <h2 style="font-size: 28px;">Welcome, {{ username }}</h2>
         </div>
-        <a href="{{ url_for('register') }}" class="action-btn">Add User</a>
+        <a href="{{ url_for('register') }}" class="action-btn add-user-btn">
+            <svg style="width: 20px; height: 20px; margin-right: 6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Add User
+        </a>
     </div>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div class="alert dashboard-alert">
+        <div class="alert dashboard-alert" style="box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15); border-left: 4px solid #c0392b;">
           {{ messages[0] }}
         </div>
       {% endif %}
     {% endwith %}
 
     <div class="stats-grid">
-        <div class="stat-card">
-            <h3>Total Requests</h3>
-            <p>{{ stats.total_requests }}</p>
+        <div class="stat-card" style="border-left: 5px solid #3498db;">
+            <div class="stat-card-header text-primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <h3>Total Requests</h3>
+            </div>
+            <p style="color: #1f2937;">{{ stats.total_requests }}</p>
+            <svg class="stat-card-icon text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
         </div>
 
         <div class="stat-card danger">
-            <h3>Blocked Requests</h3>
-            <p>{{ stats.blocked_requests }}</p>
+            <div class="stat-card-header text-danger">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3>Blocked Requests</h3>
+            </div>
+            <p style="color: #1f2937;">{{ stats.blocked_requests }}</p>
+            <svg class="stat-card-icon text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         </div>
 
         <div class="stat-card success">
-            <h3>Registered Users</h3>
-            <p>{{ stats.active_users }}</p>
+            <div class="stat-card-header text-success">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <h3>Registered Users</h3>
+            </div>
+            <p style="color: #1f2937;">{{ stats.active_users }}</p>
+            <svg class="stat-card-icon text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         </div>
 
         <div class="stat-card warning">
-            <h3>Blocked Sites</h3>
-            <p>{{ stats.blocked_sites }}</p>
+            <div class="stat-card-header text-warning">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                <h3>Blocked Sites</h3>
+            </div>
+            <p style="color: #1f2937;">{{ stats.blocked_sites }}</p>
+            <svg class="stat-card-icon text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
         </div>
     </div>
 
-    <div class="dashboard-panel dashboard-table-panel">
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">Proxy Server</p>
-                <h3>Route browser traffic through this proxy</h3>
+    <div class="dashboard-panel dashboard-table-panel dashboard-panel-glass">
+        <svg class="panel-bg-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <div class="panel-header" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px; margin-bottom: 20px;">
+            <div class="panel-icon-header">
+                <div style="background: rgba(52, 152, 219, 0.1); padding: 10px; border-radius: 12px; color: #3498db;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+                </div>
+                <div>
+                    <p class="eyebrow">Proxy Server</p>
+                    <h3 style="color: #1e293b;">Route browser traffic through this proxy</h3>
+                </div>
             </div>
         </div>
         <div class="proxy-guide">
-            <div class="proxy-guide-card">
-                <strong>Proxy Address</strong>
-                <p>{{ proxy_host }}:{{ proxy_port }}</p>
+            <div class="proxy-guide-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                <strong style="color: #3b82f6;">Proxy Address</strong>
+                <p style="margin-top: 6px; font-family: monospace; font-size: 16px; background: rgba(59, 130, 246, 0.05); padding: 4px 8px; border-radius: 6px; display: inline-block;">{{ proxy_host }}:{{ proxy_port }}</p>
             </div>
-            <div class="proxy-guide-card">
-                <strong>Browser Setup</strong>
-                <p>Set your browser or system HTTP/HTTPS proxy to {{ proxy_host }} port {{ proxy_port }}.</p>
+            <div class="proxy-guide-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <strong style="color: #10b981;">Browser Setup</strong>
+                <p style="margin-top: 6px; color: #4b5563;">Set your browser or system HTTP/HTTPS proxy to <b>{{ proxy_host }}</b> port <b>{{ proxy_port }}</b>.</p>
             </div>
-            <div class="proxy-guide-card">
-                <strong>What Gets Logged</strong>
-                <p>Visited destination, request method, protocol, allowed or blocked status, bandwidth, and timestamp.</p>
+            <div class="proxy-guide-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <strong style="color: #8b5cf6;">What Gets Logged</strong>
+                <p style="margin-top: 6px; color: #4b5563;">Visited destination, request method, protocol, allowed or blocked status, bandwidth, and timestamp.</p>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-panel dashboard-table-panel">
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">Admin Overview</p>
-                <h3>Recent Users</h3>
+    <div class="dashboard-panel dashboard-table-panel dashboard-panel-glass">
+        <svg class="panel-bg-icon" style="top: -20px; color: rgba(46, 204, 113, 0.03);" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <div class="panel-header" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px; margin-bottom: 20px;">
+            <div class="panel-icon-header">
+                <div style="background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 12px; color: #2ecc71;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="eyebrow">Admin Overview</p>
+                    <h3 style="color: #1e293b;">Recent Users</h3>
+                </div>
             </div>
         </div>
 
         {% if latest_users %}
-        <div class="table-container">
-            <table>
-                <thead>
+        <div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                     <tr>
-                        <th>Username</th>
-                        <th>Created At</th>
-                        <th>Status</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #64748b; font-weight: 600;">Username</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #64748b; font-weight: 600;">Created At</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #64748b; font-weight: 600;">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in latest_users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.created_at }}</td>
-                        <td><span class="pill pill-allowed">Active</span></td>
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                        <td style="padding: 14px 20px; font-weight: 500; color: #334155;">{{ user.username }}</td>
+                        <td style="padding: 14px 20px; color: #64748b;">{{ user.created_at }}</td>
+                        <td style="padding: 14px 20px;"><span class="pill pill-allowed" style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;">Active</span></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-            <p class="empty">No users registered yet.</p>
+            <div style="background: white; border-radius: 12px; padding: 30px; text-align: center; border: 1px dashed #cbd5e1;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; color: #94a3b8; margin: 0 auto 12px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <p class="empty" style="color: #64748b; margin: 0; font-size: 16px;">No users registered yet.</p>
+            </div>
         {% endif %}
     </div>
 </div>

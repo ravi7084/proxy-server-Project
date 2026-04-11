@@ -349,7 +349,7 @@ def close_db(error):
 
 @app.route("/")
 def home():
-    return render_template("home.html", active_page="home")
+    return render_template("index.html", active_page="home")
 
 
 @app.route("/login", methods=["GET", "POST"])
